@@ -30,23 +30,25 @@ defmodule ConnectFour.Board do
   end
 
   def print(row, column) do
-    ConnectFour.Space.agent_name(row, column)
-    |> Process.whereis
-    |> Agent.get(fn state -> state end)
-    |> convert_for_display
+    ConnectFour.Space.to_string(row, column)
     |> IO.write
   end
 
-  def convert_for_display(state) do
-    case state do
-      :empty -> "."
-      :red   -> "R"
-      :black -> "B"
-      _      -> "?"
-    end
+  def place_token(player, column) do
+    first_empty_row(column)
+    |> ConnectFour.Space.get_pid(column)
+    |> Agent.update(fn _ -> player end)
+
+    :move_accepted
   end
 
-  def place_token(player, column) do
-    :move_accepted
+  def first_empty_row(column), do: _first_empty_row(1, column)
+
+  defp _first_empty_row(row, column) do
+    if ConnectFour.Space.empty?(row, column) do
+      row
+    else
+      _first_empty_row(row + 1, column)
+    end
   end
 end

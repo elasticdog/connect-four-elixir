@@ -3,7 +3,7 @@ defmodule ConnectFour.Board do
 
   @registered_name ConnectFourBoard
   @last_row 6
-  @last_col 7
+  @last_column 7
 
   def start_link do
     Supervisor.start_link(__MODULE__, :ok, [name: @registered_name])
@@ -17,7 +17,7 @@ defmodule ConnectFour.Board do
   end
 
   def spaces do
-    for row <- 1..@last_row, col <- 1..@last_col, do: {row, col}
+    for row <- 1..@last_row, column <- 1..@last_column, do: {row, column}
   end
 
   def print do
@@ -25,12 +25,12 @@ defmodule ConnectFour.Board do
   end
 
   def print(row) do
-    for col <- @last_col..1, do: print(row, col)
+    for column <- @last_column..1, do: print(row, column)
     IO.write "\n"
   end
 
-  def print(row, col) do
-    ConnectFour.Space.agent_name(row, col)
+  def print(row, column) do
+    ConnectFour.Space.agent_name(row, column)
     |> Process.whereis
     |> Agent.get(fn state -> state end)
     |> convert_for_display

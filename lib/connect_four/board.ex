@@ -25,7 +25,7 @@ defmodule ConnectFour.Board do
   end
 
   def print(row) do
-    for column <- @last_column..1, do: print(row, column)
+    for column <- 1..@last_column, do: print(row, column)
     IO.write "\n"
   end
 

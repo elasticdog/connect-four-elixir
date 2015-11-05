@@ -21,10 +21,10 @@ defmodule ConnectFour.Board do
   end
 
   def print do
-    for row <- @last_row..1, do: print_columns(row)
+    for row <- @last_row..1, do: print_row(row)
   end
 
-  def print_columns(row) do
+  def print_row(row) do
     for col <- @last_col..1, do: print_space(row, col)
     IO.write "\n"
   end

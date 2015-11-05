@@ -1,6 +1,8 @@
 defmodule ConnectFour.Board do
   use Supervisor
 
+  alias ConnectFour.Space, as: Space
+
   @registered_name ConnectFourBoard
   @last_row 6
   @last_column 7
@@ -11,7 +13,7 @@ defmodule ConnectFour.Board do
 
   def init(:ok) do
     for space <- spaces do
-      worker(ConnectFour.Space, [space], id: space)
+      worker(Space, [space], id: space)
     end
     |> supervise(strategy: :one_for_one)
   end
@@ -30,13 +32,13 @@ defmodule ConnectFour.Board do
   end
 
   def print(row, column) do
-    ConnectFour.Space.to_string(row, column)
+    Space.to_string(row, column)
     |> IO.write
   end
 
   def place_token(player, column) do
     first_empty_row(column)
-    |> ConnectFour.Space.get_pid(column)
+    |> Space.get_pid(column)
     |> Agent.update(fn _ -> player end)
 
     :move_accepted
@@ -45,7 +47,7 @@ defmodule ConnectFour.Board do
   def first_empty_row(column), do: _first_empty_row(1, column)
 
   defp _first_empty_row(row, column) do
-    if ConnectFour.Space.empty?(row, column) do
+    if Space.empty?(row, column) do
       row
     else
       _first_empty_row(row + 1, column)

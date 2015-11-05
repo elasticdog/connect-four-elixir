@@ -45,4 +45,8 @@ defmodule ConnectFour.Board do
       _      -> "?"
     end
   end
+
+  def place_token(player, column) do
+    :move_accepted
+  end
 end

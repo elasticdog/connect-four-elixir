@@ -21,15 +21,15 @@ defmodule ConnectFour.Board do
   end
 
   def print do
-    for row <- @last_row..1, do: print_row(row)
+    for row <- @last_row..1, do: print(row)
   end
 
-  def print_row(row) do
-    for col <- @last_col..1, do: print_space(row, col)
+  def print(row) do
+    for col <- @last_col..1, do: print(row, col)
     IO.write "\n"
   end
 
-  def print_space(row, col) do
+  def print(row, col) do
     ConnectFour.Space.agent_name(row, col)
     |> Process.whereis
     |> Agent.get(fn state -> state end)

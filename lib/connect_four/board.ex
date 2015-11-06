@@ -37,12 +37,15 @@ defmodule ConnectFour.Board do
   end
 
   def place_token(player, column) do
-    first_empty_row(column)
-    |> Space.get_pid(column)
-    |> Agent.update(fn _ -> player end)
-
-    :move_accepted
+    if full?(column) do
+      :column_full
+    else
+      Space.update(first_empty_row(column), column, fn _ -> player end)
+      :move_accepted
+    end
   end
+
+  def full?(column), do: Space.state(@last_row, column) != :empty
 
   def first_empty_row(column), do: _first_empty_row(1, column)
 

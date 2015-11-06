@@ -27,4 +27,8 @@ defmodule ConnectFour.Space do
       _      -> "?"
     end
   end
+
+  def update(row, column, fun) do
+    get_pid(row, column) |> Agent.update(fun)
+  end
 end

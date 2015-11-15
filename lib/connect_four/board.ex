@@ -6,6 +6,7 @@ defmodule ConnectFour.Board do
   @registered_name ConnectFourBoard
   @last_row 6
   @last_column 7
+  @match_length 4
 
   def start_link do
     Supervisor.start_link(__MODULE__, :ok, [name: @registered_name])
@@ -40,8 +41,14 @@ defmodule ConnectFour.Board do
     if full?(column) do
       :column_full
     else
-      Space.update(first_empty_row(column), column, fn _ -> player end)
-      :move_accepted
+      row = first_empty_row(column)
+      Space.update(row, column, fn _ -> player end)
+
+      if winner?(row, column) do
+        :winner
+      else
+        :move_accepted
+      end
     end
   end
 
@@ -55,5 +62,27 @@ defmodule ConnectFour.Board do
     else
       _first_empty_row(row + 1, column)
     end
+  end
+
+  def winner?(row, column) do
+    cond do
+      vertical_winner?(row, column) -> true
+      # horizontal_winner?(row, column) -> true
+      # diagonal_winner?(row, column) -> true
+      :else -> false
+    end
+  end
+
+  def vertical_winner?(row, _column) when row < @match_length, do: false
+  def vertical_winner?(row, column) do
+    starting_row = row - @match_length + 1
+
+    Enum.to_list(row .. starting_row)
+    |> Enum.map(&(Space.state(&1, column)))
+    |> all_equal?
+  end
+
+  def all_equal?([head|tail]) do
+    tail |> Enum.all?(&(&1 == head))
   end
 end

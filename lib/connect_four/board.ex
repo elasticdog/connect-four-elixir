@@ -67,7 +67,7 @@ defmodule ConnectFour.Board do
   def winner?(row, column) do
     cond do
       vertical_winner?(row, column) -> true
-      # horizontal_winner?(row, column) -> true
+      horizontal_winner?(row, column) -> true
       # diagonal_winner?(row, column) -> true
       :else -> false
     end
@@ -84,5 +84,15 @@ defmodule ConnectFour.Board do
 
   def all_equal?([head|tail]) do
     tail |> Enum.all?(&(&1 == head))
+  end
+
+  def horizontal_winner?(row, column) do
+    min_column = Enum.max([1, column - @match_length + 1])
+    max_column = Enum.min([@last_column, column + @match_length - 1])
+
+    Enum.to_list(min_column .. max_column)
+    |> Enum.map(&(Space.state(row, &1)))
+    |> Enum.chunk(@match_length, 1)
+    |> Enum.any?(&all_equal?/1)
   end
 end
